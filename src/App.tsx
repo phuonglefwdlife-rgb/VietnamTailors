@@ -18,7 +18,8 @@ import {
   Network,
   Languages,
   Plane,
-  ShieldCheck
+  ShieldCheck,
+  Share2
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { cn } from './lib/utils';
@@ -218,6 +219,25 @@ Best regards.`;
   const handleCopyDetails = () => {
     navigator.clipboard.writeText(getRequestDetails());
     alert("Request details copied to clipboard!");
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: 'My Custom Tailoring Profile - VietnamTailors',
+      text: `Check out my custom ${state.selectedCategory} design on VietnamTailors! I'm getting it tailored with professional precision.`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard! You can now share it anywhere.");
+      }
+    } catch (err) {
+      console.log('User cancelled share or error occurred');
+    }
   };
 
   const handleInspirationUpload = async (files: File[]) => {
@@ -625,15 +645,24 @@ Best regards.`;
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="space-y-8">
                     <div className="bg-white p-8 rounded-[40px] shadow-2xl shadow-slate-900/5 border border-slate-100">
-                      <div className="flex items-center space-x-4 mb-8">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-900">
-                          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200" className="w-full h-full object-cover" />
+                        <div className="flex items-center justify-between mb-8">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-900">
+                              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200" className="w-full h-full object-cover" />
+                            </div>
+                            <div>
+                               <h4 className="font-serif text-xl">Valued Client</h4>
+                               <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Profile Summary</p>
+                            </div>
+                          </div>
+                          <button 
+                            onClick={handleShare}
+                            className="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white transition-all group"
+                            title="Share Profile"
+                          >
+                            <Share2 size={16} className="group-hover:scale-110 transition-transform" />
+                          </button>
                         </div>
-                        <div>
-                          <h4 className="font-serif text-xl">Valued Client</h4>
-                          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Profile Summary</p>
-                        </div>
-                      </div>
 
                       <div className="space-y-6">
                         <section>
@@ -724,25 +753,34 @@ Best regards.`;
                         <h3 className="text-xs uppercase tracking-[0.2em] font-bold opacity-30">Action</h3>
                       
                       {!requestSent ? (
-                        <div className="flex space-x-2 sm:space-x-4">
-                          <a 
-                            href={`mailto:vietnamtailors@gmail.com?subject=${encodeURIComponent(`Bespoke Tailoring Request - ${state.selectedCategory}`)}&body=${encodeURIComponent(getRequestDetails())}`}
-                            onClick={() => setRequestSent(true)}
-                            className="flex-1 border border-slate-200 py-3 sm:py-4 rounded-full font-bold text-[9px] sm:text-xs uppercase tracking-widest hover:bg-white transition-colors flex items-center justify-center text-slate-900 no-underline"
+                        <div className="space-y-3">
+                          <div className="flex space-x-2 sm:space-x-4">
+                            <a 
+                              href={`mailto:vietnamtailors@gmail.com?subject=${encodeURIComponent(`Bespoke Tailoring Request - ${state.selectedCategory}`)}&body=${encodeURIComponent(getRequestDetails())}`}
+                              onClick={() => setRequestSent(true)}
+                              className="flex-1 border border-slate-200 py-3 sm:py-4 rounded-full font-bold text-[9px] sm:text-xs uppercase tracking-widest hover:bg-white transition-colors flex items-center justify-center text-slate-900 no-underline"
+                            >
+                              <Mail size={12} className="mr-1.5 sm:mr-2 sm:size-[14px]" />
+                              Send Request
+                            </a>
+                            <a 
+                              href={getCalendarUrl()}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setRequestSent(true)}
+                              className="flex-1 bg-slate-900 text-white py-3 sm:py-4 rounded-full font-bold text-[9px] sm:text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 hover:scale-[1.02] transition-transform flex items-center justify-center no-underline"
+                            >
+                              <Calendar size={12} className="mr-1.5 sm:mr-2 sm:size-[14px]" />
+                              Book Appointment
+                            </a>
+                          </div>
+                          <button 
+                            onClick={handleShare}
+                            className="w-full bg-slate-50 border border-slate-100 py-3 rounded-full font-bold text-[9px] sm:text-xs uppercase tracking-widest text-slate-500 hover:bg-white hover:text-slate-900 transition-all flex items-center justify-center"
                           >
-                            <Mail size={12} className="mr-1.5 sm:mr-2 sm:size-[14px]" />
-                            Send Request
-                          </a>
-                          <a 
-                            href={getCalendarUrl()}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => setRequestSent(true)}
-                            className="flex-1 bg-slate-900 text-white py-3 sm:py-4 rounded-full font-bold text-[9px] sm:text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 hover:scale-[1.02] transition-transform flex items-center justify-center no-underline"
-                          >
-                            <Calendar size={12} className="mr-1.5 sm:mr-2 sm:size-[14px]" />
-                            Book Appointment
-                          </a>
+                            <Share2 size={12} className="mr-1.5 sm:mr-2 sm:size-[14px]" />
+                            Share My Design
+                          </button>
                         </div>
                       ) : (
                         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
